@@ -7,66 +7,62 @@ from botocore.exceptions import ClientError
 
 s3 = boto3.client('s3')
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('uploadfile')  # Replace with your table name
+table = dynamodb.Table('uploadfile')  # Your table name
 
 def lambda_handler(event, context):
     try:
-        # Parse the multipart/form-data from API Gateway
-        if 'body-json' not in event:
+        if 'body' not in event:
             return {
                 'statusCode': 400,
                 'body': json.dumps({'message': 'Missing request body'})
             }
 
-        # Decode data    
-        image_data = event['body-json']
-        try:
-            i_data_decode = base64.b64decode(image_data.split(',')[-1] if ',' in image_data else image_data)
-            print(i_data_decode)
-            print("data loaded...")
-        except json.JSONDecodeError:
-            print("data not loaded...")
+        # Decode the base64-encoded binary body
+        image_data = event['body']
+        is_base64 = event.get('isBase64Encoded', False)
+        if is_base64:
+            file_bytes = base64.b64decode(image_data)
+        else:
+            file_bytes = image_data.encode()  # Fallback if not base64
 
-        # Get metadata from headers
+        # Read metadata from headers
+        headers = event.get('headers', {})
         metadata = {
-            'filename': event['params']['header'].get('filename', 'unnamed.jpg'),
-            'content_type': event['params']['header'].get('content-type', 'image/jpeg'),
-            'owner_id': event['params']['header'].get('owner-id')
+            'filename': headers.get('filename', 'unnamed.mp3'),
+            'content_type': headers.get('content-type', 'audio/mpeg'),
+            'owner_id': headers.get('owner-id', 'unknown')
         }
 
-        # Generate unique file ID and S3 key
+        # Generate a unique ID and build S3 key
         file_id = str(uuid.uuid4())
         s3_key = f"audio-store/{file_id}-{metadata['filename']}"
-        
+
         # Upload to S3
-        s3_bucket = 'voicenav-bucket' 
+        bucket_name = 'voicenav-bucket'
         s3.put_object(
-            Bucket=s3_bucket,
+            Bucket=bucket_name,
             Key=s3_key,
-            Body=i_data_decode,
+            Body=file_bytes,
             ContentType=metadata['content_type']
         )
-        
-        # Construct S3 link
-        s3_link = f"https://{s3_bucket}.s3.amazonaws.com/{s3_key}"
 
-        # Prepare DynamoDB item
-        item = {
+        # Generate public S3 URL (if bucket is public or signed URLs used)
+        s3_link = f"https://{bucket_name}.s3.amazonaws.com/{s3_key}"
+
+        # Log metadata to DynamoDB
+        table.put_item(Item={
             'file_id': file_id,
             'filename': metadata['filename'],
             'owner_id': metadata['owner_id'],
             's3_link': s3_link,
-            'upload_date': datetime.now().isoformat(),
+            'upload_date': datetime.utcnow().isoformat(),
             'content_type': metadata['content_type']
-        }
-
-        # Store metadata in DynamoDB
-        table.put_item(Item=item)
+        })
 
         return {
             'statusCode': 200,
             'body': json.dumps({
-                'message': 'File uploaded successfully',
+                'message': 'Audio uploaded successfully',
                 'file_id': file_id,
                 's3_link': s3_link
             })
