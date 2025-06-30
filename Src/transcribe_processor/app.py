@@ -1,44 +1,47 @@
-import json, os, uuid, boto3, logging
-from urllib.parse import unquote_plus
+# lambda_function.py
+import os
+import json
+import uuid
+import boto3
 
-log = logging.getLogger()
-log.setLevel(logging.INFO)
+TRANSCRIBE = boto3.client("transcribe")
+S3         = boto3.client("s3")
 
-TRANSCRIBE   = boto3.client("transcribe")
+OUTPUT_BUCKET = os.environ.get("OUTPUT_BUCKET",  os.environ["AWS_BUCKET"])
+OUTPUT_PREFIX = os.environ.get("OUTPUT_PREFIX", "transcribe-output/")
+LANGUAGE      = os.environ.get("LANGUAGE_CODE",  "en-US")
+FORMAT        = os.environ.get("MEDIA_FORMAT",   "webm")
 
-# hard-code for now; later derive from event
-INPUT_BUCKET  = "voicenav-bucket"
-OUTPUT_BUCKET = "voicenav-bucket"      # same bucket, different prefix
-OUTPUT_PREFIX = "transcribe-output/"   # trailing slash required
-LANG_CODE     = "en-US"                # adjust as needed
-MEDIA_FORMAT  = "mp3"                 # your sample file
 
 def lambda_handler(event, _ctx):
     """
-    Event can be either:
-    • an S3 trigger   → event['Records'][0]['s3']['bucket']['name'] / ['object']['key']
-    • a manual test   → {"bucket":"...","key":"..."}
+    Triggered by S3:ObjectCreated:* on  s3://<bucket>/audio-store/*
     """
-    if "Records" in event:         # S3 trigger
-        rec   = event["Records"][0]
-        bucket= rec["s3"]["bucket"]["name"]
-        key   = unquote_plus(rec["s3"]["object"]["key"])
-    else:                          # manual invoke
-        bucket = event["bucket"]
-        key    = event["key"]
+    # 1️⃣  Pick the first record (we get one per upload)
+    rec       = event["Records"][0]["s3"]
+    in_bucket = rec["bucket"]["name"]
+    in_key    = rec["object"]["key"]
 
-    media_uri = f"s3://{bucket}/{key}"
-    job_name  = f"transcribe-{uuid.uuid4()}"
+    # 2️⃣  Build unique Transcribe-job name & media-URI
+    job_id   = f"voicejob-{uuid.uuid4()}"
+    media_uri = f"s3://{in_bucket}/{in_key}"
 
-    log.info("Starting job %s for %s", job_name, media_uri)
-
+    # 3️⃣  Kick off Transcribe
     TRANSCRIBE.start_transcription_job(
-        TranscriptionJobName = job_name,
+        TranscriptionJobName = job_id,
+        LanguageCode         = LANGUAGE,
+        MediaFormat          = FORMAT,
         Media                = {"MediaFileUri": media_uri},
-        MediaFormat          = MEDIA_FORMAT,
-        LanguageCode         = LANG_CODE,
         OutputBucketName     = OUTPUT_BUCKET,
-        OutputKey            = f"{OUTPUT_PREFIX}{job_name}.json"
+        OutputKey            = f"{OUTPUT_PREFIX}{job_id}.json"
     )
 
-    return {"status": "started", "job": job_name}
+    # 4️⃣  (Optional) return info for debugging
+    return {
+        "statusCode": 200,
+        "body": json.dumps({
+            "job": job_id,
+            "media": media_uri,
+            "output": f"s3://{OUTPUT_BUCKET}/{OUTPUT_PREFIX}{job_id}.json"
+        })
+    }

@@ -1,9 +1,13 @@
-body { font-family: system-ui, sans-serif; margin: 0; }
-header { background:#0253b3; color:#fff; padding:1rem 2rem; display:flex; flex-wrap:wrap; align-items:center; }
-header h1 { margin:0 2rem 0 0; font-size:1.4rem; }
-nav a { color:#fff; margin-right:1rem; text-decoration:none; font-weight:600; padding:.2rem .5rem; border-radius:.3rem; }
-nav a.active { background:#fff; color:#0253b3; }
-main { padding:2rem; }
-.panel { padding:1rem 2rem; }
-button { padding:.6rem 1.2rem; font-size:1rem; cursor:pointer; }
-#log { background:#000; color:#0f0; margin:0; padding:1rem; max-height:160px; overflow:auto; }
+body   { font-family: system-ui, sans-serif; margin:0 }
+header { background:#0265cc; color:#fff; padding:1rem 2rem; display:flex; align-items:center }
+header h1{ margin:0 2rem 0 0; font-size:1.4rem }
+nav a  { color:#fff; margin-right:1rem; text-decoration:none; font-weight:600;
+         padding:.3rem .6rem; border-radius:.3rem }
+nav a.active{ background:#fff; color:#0265cc }
+main   { padding:2rem }
+.panel { padding:1rem 2rem }
+button { padding:.6rem 1.2rem; font-size:1rem; cursor:pointer }
+#log   { background:#000; color:#0f0; padding:1rem; margin:0; max-height:160px; overflow:auto;
+         font-size:.85rem }
+form   { max-width:320px; display:grid; gap:.6rem }
+input, textarea { padding:.5rem; font-size:1rem }
