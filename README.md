@@ -21,6 +21,7 @@ BrightSmile VoiceNav lets anyone control a single-page application with **natura
 ## 🛠 AWS Architecture
 
 flowchart LR
+
     A[Browser\nMediaRecorder] --PUT--> S3[(S3 audio-store/)]
     S3 --createObject event--> T[Lambda ✨ Transcribe Trigger]
     T --> TR[AWS Transcribe job]
@@ -31,7 +32,7 @@ flowchart LR
     B --PostToConnection--> WS(API Gateway WS)
     WS --websocket--> A
 =======
-VoiceNav‑AI is a serverless accessibility tool that lets visually‑impaired users navigate modern websites by voice.  An AWS‑Lambda backend converts speech to structured intents (using Amazon Transcribe + a Gen‑AI model) and returns click instructions to the client, which then moves the cursor and reads key page content aloud.
+VoiceNav‑AI is a serverless accessibility tool that lets visually‑impaired users navigate modern websites by voice.  An AWS‑Lambda backend converts speech to structured intents (using Amazon Transcribe + a Gen‑AI model) and returns click instructions to the client, which then moves the cursor and reads key page content aloud. 
 
 Tech stacks:
     Lambda
