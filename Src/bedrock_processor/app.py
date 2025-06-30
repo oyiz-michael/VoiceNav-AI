@@ -102,3 +102,4 @@ def lambda_handler(event, _):
     except Exception as exc:
         log.error("FATAL %s\n%s", exc, traceback.format_exc())
         raise
+    
