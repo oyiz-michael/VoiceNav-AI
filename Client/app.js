@@ -1,26 +1,45 @@
-/***** HARD-CODED CONFIG *****/
-const REGION  = "us-east-1";
-const BUCKET  = "voicenav-bucket";
-const PREFIX  = "audio-store/";
-const WS_URL  = "wss://ry6pg133uf.execute-api.us-east-1.amazonaws.com/production";
+/***** CONFIGURATION *****/
+// Load configuration - in production, load from config.js
+const CONFIG = {
+  REGION: "us-east-1",
+  BUCKET: "voicenav-bucket", 
+  PREFIX: "audio-store/",
+  WS_URL: "wss://ry6pg133uf.execute-api.us-east-1.amazonaws.com/production",
+  RECORDING_FORMAT: "audio/webm",
+  MAX_RECORDING_TIME: 30000,
+  SHOW_DEBUG_LOG: true,
+  AUTO_RECONNECT: true,
+  RECONNECT_DELAY: 1000
+};
 
-/***** WebSocket *****/
+/***** WebSocket Management *****/
 let ws;
-function ensureWS () {
+
+function ensureWS() {
   if (ws && ws.readyState === WebSocket.OPEN) return;
 
-  ws = new WebSocket(WS_URL);
+  ws = new WebSocket(CONFIG.WS_URL);
 
-  ws.onopen    = () => log("WS connected");
-  ws.onerror   = console.error;
-  ws.onclose   = () => {               // auto-reconnect on 1006 (gone)
-    log("WS closed – reconnecting in 1 s");
-    setTimeout(ensureWS, 1000);
+  ws.onopen = () => log("WebSocket connected");
+  ws.onerror = (error) => {
+    console.error("WebSocket error:", error);
+    log("WebSocket error occurred");
   };
-  ws.onmessage = e => {
-    log("← " + e.data);
-    try { runIntent(JSON.parse(e.data)); }
-    catch (err) { console.error("Bad JSON:", err); }
+  ws.onclose = (event) => {
+    log(`WebSocket closed (${event.code}) - reconnecting in ${CONFIG.RECONNECT_DELAY}ms`);
+    if (CONFIG.AUTO_RECONNECT) {
+      setTimeout(ensureWS, CONFIG.RECONNECT_DELAY);
+    }
+  };
+  ws.onmessage = (event) => {
+    log("← " + event.data);
+    try { 
+      const intent = JSON.parse(event.data);
+      runIntent(intent);
+    } catch (err) { 
+      console.error("Failed to parse WebSocket message:", err);
+      log("Invalid JSON received from server");
+    }
   };
 }
 
