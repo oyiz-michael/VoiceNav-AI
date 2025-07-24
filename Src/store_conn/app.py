@@ -20,9 +20,12 @@ from typing import Dict, Any
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Initialize DynamoDB resource
-dynamodb = boto3.resource("dynamodb")
-table = dynamodb.Table(os.getenv("CONN_TABLE", "VoiceNavConnections"))
+
+def get_dynamodb_table():
+    """Get DynamoDB table instance."""
+    region = os.getenv("AWS_DEFAULT_REGION", "us-east-1")
+    dynamodb = boto3.resource("dynamodb", region_name=region)
+    return dynamodb.Table(os.getenv("CONN_TABLE", "VoiceNavConnections"))
 
 
 def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
@@ -41,6 +44,9 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         event_type = event["requestContext"]["eventType"]
 
         logger.info(f"Processing {event_type} for connection {connection_id}")
+
+        # Get table instance
+        table = get_dynamodb_table()
 
         if event_type == "CONNECT":
             # Store connection with 1-hour TTL
