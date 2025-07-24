@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "python -m http.server 8000",
-    "lint": "npx eslint *.js",
+    "lint": "npx eslint app.js --ignore-path .eslintignore",
     "format": "npx prettier --write *.js *.html *.css",
     "build": "npm run lint && npm run minify",
     "minify": "npx terser app.js -o app.min.js --compress --mangle",

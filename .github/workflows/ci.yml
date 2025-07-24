@@ -41,7 +41,9 @@ jobs:
       
     - name: Lint JavaScript code  
       working-directory: ./Client
-      run: npm run lint
+      run: |
+        rm -f *.min.js
+        npm run lint
       
     - name: Run Python tests
       env:
@@ -102,4 +104,5 @@ jobs:
       working-directory: ./Client
       run: |
         npm install
+        rm -f *.min.js
         npm run build
