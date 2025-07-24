@@ -38,7 +38,7 @@ jobs:
         flake8 Src/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         
     - name: Type check Python code
-      run: mypy Src/ --ignore-missing-imports
+      run: mypy Src/ --explicit-package-bases --ignore-missing-imports
       
     - name: Lint JavaScript code  
       working-directory: ./Client

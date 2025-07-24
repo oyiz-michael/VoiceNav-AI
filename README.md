@@ -160,6 +160,12 @@ VoiceNav-AI/
 ### Running Tests
 
 ```bash
+# Use Makefile for comprehensive testing
+make test                    # Run all tests
+make test-py                 # Python tests only
+make quick-test             # Quick test without JS dependencies
+
+# Or run directly:
 # Frontend tests
 cd Client && npm test
 
@@ -168,6 +174,28 @@ cd Src && python -m pytest
 
 # Integration tests
 npm run test:integration
+```
+
+### Development Workflow
+
+```bash
+# Complete development setup
+make setup
+
+# Code quality checks
+make lint                    # Lint code
+make type-check             # Type checking
+make format                 # Format code
+make check                  # All quality checks
+
+# Development servers
+make dev-client             # Start client dev server
+make dev-docs              # Serve documentation
+
+# AWS operations
+make deploy                 # Deploy to AWS
+make logs                   # Tail CloudWatch logs
+make status                 # Check AWS resources
 ```
 
 ### Environment Variables
