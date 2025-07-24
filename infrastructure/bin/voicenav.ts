@@ -16,7 +16,7 @@ new VoiceNavStack(app, 'VoiceNavStack', {
   tableName: app.node.tryGetContext('tableName') || 'VoiceNavConnections',
   bedrockModelId: app.node.tryGetContext('bedrockModelId') || 'anthropic.claude-3-sonnet-20240229-v1:0',
   
-  // Lambda source paths (updated to use underscores)
+  // Lambda source paths
   lambdaPaths: {
     storeConn: '../Src/store_conn',
     transcribeProcessor: '../Src/transcribe_processor', 
