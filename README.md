@@ -149,9 +149,9 @@ VoiceNav-AI/
 │   ├── style.css         # Demo styles
 │   └── config.js         # Configuration
 ├── Src/                   # Lambda functions
-│   ├── store-conn/       # WebSocket connection handler
-│   ├── transcribe-processor/  # Audio transcription trigger
-│   └── bedrock-processor/     # AI intent processing
+│   ├── store_conn/       # WebSocket connection handler
+│   ├── transcribe_processor/  # Audio transcription trigger
+│   └── bedrock_processor/     # AI intent processing
 ├── infrastructure/        # CDK deployment code
 ├── docs/                 # Documentation
 └── tests/                # Test suites
@@ -196,6 +196,10 @@ make dev-docs              # Serve documentation
 make deploy                 # Deploy to AWS
 make logs                   # Tail CloudWatch logs
 make status                 # Check AWS resources
+
+# Validation
+make validate-structure     # Validate Python package structure
+make validate-config        # Check configuration files
 ```
 
 ### Environment Variables

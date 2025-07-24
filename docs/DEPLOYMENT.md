@@ -82,7 +82,7 @@ aws iam put-role-policy \
 #### Store Connection Handler
 
 ```bash
-cd Src/store-conn
+cd Src/store_conn
 zip -r store-conn.zip .
 aws lambda create-function \
   --function-name VoiceNav-StoreConn \
@@ -96,7 +96,7 @@ aws lambda create-function \
 #### Transcribe Processor
 
 ```bash
-cd ../transcribe-processor
+cd ../transcribe_processor
 zip -r transcribe-processor.zip .
 aws lambda create-function \
   --function-name VoiceNav-TranscribeProcessor \
@@ -110,7 +110,7 @@ aws lambda create-function \
 #### Bedrock Processor
 
 ```bash
-cd ../bedrock-processor
+cd ../bedrock_processor
 zip -r bedrock-processor.zip .
 aws lambda create-function \
   --function-name VoiceNav-BedrockProcessor \

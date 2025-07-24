@@ -7,7 +7,7 @@ import boto3
 
 # Add the source directory to the path
 import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Src', 'store-conn'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Src', 'store_conn'))
 
 from app import lambda_handler
 

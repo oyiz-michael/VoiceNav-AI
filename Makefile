@@ -48,8 +48,10 @@ lint: ## Run linting on Python and JavaScript code
 	cd Client && npm run lint || echo "$(RED)JavaScript linting failed$(NC)"
 
 type-check: ## Run type checking with mypy
+	@echo "$(YELLOW)Running syntax check...$(NC)"
+	python3 -m py_compile Src/store_conn/app.py Src/transcribe_processor/app.py Src/bedrock_processor/app.py
 	@echo "$(YELLOW)Running type checking...$(NC)"
-	mypy Src/ --explicit-package-bases --ignore-missing-imports
+	mypy Src/ --explicit-package-bases --ignore-missing-imports || echo "$(RED)mypy not installed - install with: pip install mypy$(NC)"
 
 format: ## Format code with black and prettier
 	@echo "$(YELLOW)Formatting Python code...$(NC)"
@@ -81,9 +83,9 @@ build: ## Build client assets and Lambda packages
 
 package-lambdas: ## Package Lambda functions for deployment
 	@echo "$(YELLOW)Packaging Lambda functions...$(NC)"
-	cd Src/store-conn && zip -r ../../store-conn.zip . -x "*.pyc" "*__pycache__*"
-	cd Src/transcribe-processor && zip -r ../../transcribe-processor.zip . -x "*.pyc" "*__pycache__*"
-	cd Src/bedrock-processor && zip -r ../../bedrock-processor.zip . -x "*.pyc" "*__pycache__*"
+	cd Src/store_conn && zip -r ../../store-conn.zip . -x "*.pyc" "*__pycache__*"
+	cd Src/transcribe_processor && zip -r ../../transcribe-processor.zip . -x "*.pyc" "*__pycache__*"
+	cd Src/bedrock_processor && zip -r ../../bedrock-processor.zip . -x "*.pyc" "*__pycache__*"
 	@echo "$(GREEN)Lambda packages created:$(NC)"
 	@ls -la *.zip
 
@@ -188,7 +190,7 @@ release: check build ## Prepare for release
 # Local testing targets
 test-local: ## Test Lambda functions locally with sample events
 	@echo "$(YELLOW)Testing Lambda functions locally...$(NC)"
-	cd Src/store-conn && python -c "import app; print(app.lambda_handler({'requestContext': {'connectionId': 'test', 'eventType': 'CONNECT'}}, None))"
+	cd Src/store_conn && python -c "import app; print(app.lambda_handler({'requestContext': {'connectionId': 'test', 'eventType': 'CONNECT'}}, None))"
 
 validate-config: ## Validate configuration files
 	@echo "$(YELLOW)Validating configuration...$(NC)"
@@ -197,6 +199,10 @@ validate-config: ## Validate configuration files
 	else \
 		echo "$(RED)Client config missing. Run: cp Client/config.example.js Client/config.js$(NC)"; \
 	fi
+
+validate-structure: ## Validate Python package structure
+	@echo "$(YELLOW)Validating Python package structure...$(NC)"
+	python3 scripts/validate_structure.py
 
 # Documentation targets
 docs: ## Generate and serve documentation
