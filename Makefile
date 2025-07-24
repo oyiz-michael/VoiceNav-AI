@@ -67,7 +67,7 @@ test: test-py test-js ## Run all tests
 
 test-py: ## Run Python tests
 	@echo "$(YELLOW)Running Python tests...$(NC)"
-	pytest tests/ -v --cov=Src/ --cov-report=term-missing --cov-report=xml
+	$(PYTHON) -m pytest tests/ -v --cov=Src/ --cov-report=term-missing --cov-report=xml
 
 test-js: ## Run JavaScript tests
 	@echo "$(YELLOW)Running JavaScript tests...$(NC)"
@@ -75,7 +75,7 @@ test-js: ## Run JavaScript tests
 
 test-integration: ## Run integration tests
 	@echo "$(YELLOW)Running integration tests...$(NC)"
-	pytest tests/ -v -m integration || echo "$(RED)No integration tests found$(NC)"
+	$(PYTHON) -m pytest tests/ -v -m integration || echo "$(RED)No integration tests found$(NC)"
 
 # Build targets
 build: ## Build client assets and Lambda packages
