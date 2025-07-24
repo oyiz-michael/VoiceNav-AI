@@ -5,10 +5,10 @@
   "main": "app.js",
   "scripts": {
     "dev": "python -m http.server 8000",
-    "lint": "eslint *.js",
-    "format": "prettier --write *.js *.html *.css",
+    "lint": "npx eslint *.js",
+    "format": "npx prettier --write *.js *.html *.css",
     "build": "npm run lint && npm run minify",
-    "minify": "terser app.js -o app.min.js --compress --mangle",
+    "minify": "npx terser app.js -o app.min.js --compress --mangle",
     "test": "echo \"No tests specified\" && exit 0"
   },
   "keywords": [

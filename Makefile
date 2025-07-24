@@ -46,7 +46,7 @@ clean: ## Clean build artifacts and cache files
 # Code quality targets
 lint: ## Run linting on Python and JavaScript code
 	@echo "$(YELLOW)Running Python linting...$(NC)"
-	flake8 Src/ tests/ --max-line-length=88 --extend-ignore=E203,W503
+	$(PYTHON) -m flake8 Src/ tests/ --max-line-length=88 --extend-ignore=E203,W503
 	@echo "$(YELLOW)Running JavaScript linting...$(NC)"
 	cd Client && npm run lint || echo "$(RED)JavaScript linting failed$(NC)"
 
@@ -58,7 +58,7 @@ type-check: ## Run type checking with mypy
 
 format: ## Format code with black and prettier
 	@echo "$(YELLOW)Formatting Python code...$(NC)"
-	black Src/ tests/ --line-length=88
+	$(PYTHON) -m black Src/ tests/ --line-length=88
 	@echo "$(YELLOW)Formatting JavaScript code...$(NC)"
 	cd Client && npm run format || echo "$(RED)JavaScript formatting failed$(NC)"
 
