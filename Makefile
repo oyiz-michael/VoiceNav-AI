@@ -1,6 +1,9 @@
 # VoiceNav-AI Development Makefile
 .PHONY: help install install-dev clean lint type-check test test-py test-js format build deploy destroy logs status
 
+# Python executable (use virtual environment if available)
+PYTHON := $(shell if [ -f .venv/bin/python ]; then echo .venv/bin/python; else echo python3; fi)
+
 # Colors for output
 RED=\033[0;31m
 GREEN=\033[0;32m
@@ -49,9 +52,9 @@ lint: ## Run linting on Python and JavaScript code
 
 type-check: ## Run type checking with mypy
 	@echo "$(YELLOW)Running syntax check...$(NC)"
-	python3 -m py_compile Src/store_conn/app.py Src/transcribe_processor/app.py Src/bedrock_processor/app.py
+	$(PYTHON) -m py_compile Src/store_conn/app.py Src/transcribe_processor/app.py Src/bedrock_processor/app.py
 	@echo "$(YELLOW)Running type checking...$(NC)"
-	mypy Src/ --explicit-package-bases --ignore-missing-imports || echo "$(RED)mypy not installed - install with: pip install mypy$(NC)"
+	$(PYTHON) -m mypy Src/ --explicit-package-bases --ignore-missing-imports || echo "$(RED)mypy not installed - install with: pip install mypy$(NC)"
 
 format: ## Format code with black and prettier
 	@echo "$(YELLOW)Formatting Python code...$(NC)"
@@ -202,7 +205,7 @@ validate-config: ## Validate configuration files
 
 validate-structure: ## Validate Python package structure
 	@echo "$(YELLOW)Validating Python package structure...$(NC)"
-	python3 scripts/validate_structure.py
+	$(PYTHON) scripts/validate_structure.py
 
 # Documentation targets
 docs: ## Generate and serve documentation

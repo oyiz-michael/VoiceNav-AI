@@ -6,6 +6,7 @@ to every live WebSocket connection stored in DynamoDB.
 """
 import boto3, json, os, time, urllib.parse, logging, traceback
 from datetime import datetime, timezone
+from typing import Dict, Any, Optional
 
 # ── 1.  ENV ─────────────────────────────────────────────────────────
 REGION       = os.environ["REGION"]            # us-east-1
@@ -44,20 +45,39 @@ PROMPT = (
 )
 
 # ── 5.  HELPERS ─────────────────────────────────────────────────────
-def ask_bedrock(cmd: str) -> dict:
+def ask_bedrock(cmd: str) -> Dict[str, Any]:
+    """
+    Send command to Bedrock and return parsed intent.
+    
+    Args:
+        cmd: Voice command string
+        
+    Returns:
+        Dict containing action and selector/other parameters
+    """
     payload = {
         "anthropic_version": "bedrock-2023-05-31",
         "messages": [{"role": "user", "content": PROMPT.format(cmd=cmd)}],
         "max_tokens": 128,
     }
-    rsp  = bed.invoke_model(modelId=MODEL_ID,
-                            contentType="application/json",
-                            accept="application/json",
-                            body=json.dumps(payload))
-    txt  = json.loads(rsp["body"].read())["content"][0]["text"]
-    return json.loads(txt)          # -> {"action":"click","selector":"#nav-book"}
+    rsp = bed.invoke_model(
+        modelId=MODEL_ID,
+        contentType="application/json",
+        accept="application/json",
+        body=json.dumps(payload)
+    )
+    txt = json.loads(rsp["body"].read())["content"][0]["text"]
+    # Parse the JSON response from Bedrock
+    intent: Dict[str, Any] = json.loads(txt)
+    return intent
 
-def broadcast(intent: dict) -> None:
+def broadcast(intent: Dict[str, Any]) -> None:
+    """
+    Broadcast intent to all active WebSocket connections.
+    
+    Args:
+        intent: Intent dictionary to broadcast
+    """
     now  = int(time.time())
     conns = ddb.scan(
         ProjectionExpression="#c,#t",
@@ -79,10 +99,20 @@ def broadcast(intent: dict) -> None:
             log.error("Post to %s failed – %s", cid, e)
 
 # ── 6.  LAMBDA HANDLER ─────────────────────────────────────────────
-def lambda_handler(event, _):
+def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+    """
+    Lambda handler for processing transcription results and generating intents.
+    
+    Args:
+        event: S3 event containing transcription file details
+        context: Lambda context (unused)
+        
+    Returns:
+        Dict with statusCode
+    """
     try:
-        rec  = event["Records"][0]["s3"]
-        key  = urllib.parse.unquote_plus(rec["object"]["key"])
+        rec = event["Records"][0]["s3"]
+        key = urllib.parse.unquote_plus(rec["object"]["key"])
         if not (key.startswith(PREFIX) and key.endswith(".json")):
             log.info("Skip %s", key); return {"statusCode":204}
 
