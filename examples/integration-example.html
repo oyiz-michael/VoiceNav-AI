@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceNav-AI Integration Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .demo-section {
+            margin: 2rem 0;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        button {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #005a8b;
+        }
+        .voice-status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #f0f0f0;
+        }
+        .form-section {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 5px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🎤 VoiceNav-AI Integration Example</h1>
+        <p>This page demonstrates how to integrate VoiceNav-AI into any website.</p>
+    </header>
+
+    <nav class="demo-section">
+        <h2>Navigation</h2>
+        <p>Try saying: "Go to about", "Click contact", "Navigate to services"</p>
+        <button id="nav-home">Home</button>
+        <button id="nav-about">About</button>
+        <button id="nav-services">Services</button>
+        <button id="nav-contact">Contact</button>
+    </nav>
+
+    <section class="demo-section">
+        <h2>Voice Control Status</h2>
+        <div class="voice-status" id="voice-status">
+            Click "Enable Voice Control" to start using voice commands
+        </div>
+        <button id="enable-voice">🎤 Enable Voice Control</button>
+        <button id="disable-voice" disabled>⏹️ Disable Voice Control</button>
+    </section>
+
+    <section class="demo-section form-section">
+        <h2>Form Interaction</h2>
+        <p>Try saying: "Type John in name field", "Fill email with test@example.com", "Focus on message"</p>
+        <form id="demo-form">
+            <label for="name">Name:</label>
+            <input type="text" id="name-field" name="name" placeholder="Your name">
+            
+            <label for="email">Email:</label>
+            <input type="email" id="email-field" name="email" placeholder="your.email@example.com">
+            
+            <label for="message">Message:</label>
+            <textarea id="message-field" name="message" rows="4" placeholder="Your message"></textarea>
+            
+            <button type="button" id="submit-btn">Submit Form</button>
+            <button type="button" id="clear-btn">Clear Form</button>
+        </form>
+    </section>
+
+    <section class="demo-section">
+        <h2>Page Actions</h2>
+        <p>Try saying: "Scroll down", "Scroll up", "Click submit button"</p>
+        <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+            <p>This is scrollable content. You can control it with voice commands.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+            <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+    </section>
+
+    <script>
+        // VoiceNav-AI Integration Example
+        // Replace with your actual VoiceNav configuration
+        
+        class VoiceNavExample {
+            constructor() {
+                this.isEnabled = false;
+                this.setupEventListeners();
+                this.setupVoiceCommands();
+            }
+            
+            setupEventListeners() {
+                document.getElementById('enable-voice').addEventListener('click', () => {
+                    this.enableVoiceControl();
+                });
+                
+                document.getElementById('disable-voice').addEventListener('click', () => {
+                    this.disableVoiceControl();
+                });
+                
+                // Demo button handlers
+                document.getElementById('nav-home').addEventListener('click', () => this.showMessage('Navigated to Home'));
+                document.getElementById('nav-about').addEventListener('click', () => this.showMessage('Navigated to About'));
+                document.getElementById('nav-services').addEventListener('click', () => this.showMessage('Navigated to Services'));
+                document.getElementById('nav-contact').addEventListener('click', () => this.showMessage('Navigated to Contact'));
+                
+                document.getElementById('submit-btn').addEventListener('click', () => this.submitForm());
+                document.getElementById('clear-btn').addEventListener('click', () => this.clearForm());
+            }
+            
+            setupVoiceCommands() {
+                // This would be replaced with actual VoiceNav-AI initialization
+                this.voiceCommands = {
+                    // Navigation commands
+                    'go to home': '#nav-home',
+                    'click home': '#nav-home',
+                    'navigate to about': '#nav-about',
+                    'go to about': '#nav-about',
+                    'click about': '#nav-about',
+                    'go to services': '#nav-services',
+                    'click services': '#nav-services',
+                    'go to contact': '#nav-contact',
+                    'click contact': '#nav-contact',
+                    
+                    // Form commands
+                    'focus on name': '#name-field',
+                    'focus name field': '#name-field',
+                    'focus on email': '#email-field',
+                    'focus email field': '#email-field',
+                    'focus on message': '#message-field',
+                    'focus message field': '#message-field',
+                    
+                    // Action commands
+                    'submit form': '#submit-btn',
+                    'click submit': '#submit-btn',
+                    'clear form': '#clear-btn',
+                    'click clear': '#clear-btn',
+                };
+            }
+            
+            enableVoiceControl() {
+                this.isEnabled = true;
+                document.getElementById('enable-voice').disabled = true;
+                document.getElementById('disable-voice').disabled = false;
+                this.updateStatus('🎤 Voice control enabled. Try saying a command!');
+                
+                // In real implementation, this would initialize VoiceNav-AI:
+                // this.voiceNav = new VoiceNav({
+                //     wsUrl: 'wss://your-api-gateway-url',
+                //     region: 'us-east-1',
+                //     bucket: 'your-s3-bucket'
+                // });
+                // this.voiceNav.addCommands(this.voiceCommands);
+            }
+            
+            disableVoiceControl() {
+                this.isEnabled = false;
+                document.getElementById('enable-voice').disabled = false;
+                document.getElementById('disable-voice').disabled = true;
+                this.updateStatus('Voice control disabled');
+                
+                // In real implementation:
+                // this.voiceNav.disconnect();
+            }
+            
+            updateStatus(message) {
+                document.getElementById('voice-status').textContent = message;
+            }
+            
+            showMessage(message) {
+                this.updateStatus(`✅ ${message}`);
+                setTimeout(() => {
+                    if (this.isEnabled) {
+                        this.updateStatus('🎤 Voice control enabled. Try saying a command!');
+                    }
+                }, 2000);
+            }
+            
+            submitForm() {
+                const name = document.getElementById('name-field').value;
+                const email = document.getElementById('email-field').value;
+                const message = document.getElementById('message-field').value;
+                
+                if (name && email && message) {
+                    this.showMessage('Form submitted successfully!');
+                } else {
+                    this.showMessage('Please fill all fields before submitting');
+                }
+            }
+            
+            clearForm() {
+                document.getElementById('demo-form').reset();
+                this.showMessage('Form cleared');
+            }
+        }
+        
+        // Initialize the example
+        document.addEventListener('DOMContentLoaded', () => {
+            new VoiceNavExample();
+        });
+    </script>
+</body>
+</html>

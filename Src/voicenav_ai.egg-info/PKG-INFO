@@ -1,3 +1,29 @@
+Metadata-Version: 2.4
+Name: voicenav-ai
+Version: 1.0.0
+Summary: Serverless voice-controlled accessibility for the web
+Author: VoiceNav-AI Contributors
+License: MIT
+Project-URL: Homepage, https://github.com/oyiz-michael/VoiceNav-AI
+Project-URL: Repository, https://github.com/oyiz-michael/VoiceNav-AI
+Project-URL: Issues, https://github.com/oyiz-michael/VoiceNav-AI/issues
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: boto3>=1.34.0
+Requires-Dist: botocore>=1.34.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0.0; extra == "dev"
+Requires-Dist: moto>=4.0.0; extra == "dev"
+Requires-Dist: black>=23.0.0; extra == "dev"
+Requires-Dist: flake8>=5.0.0; extra == "dev"
+Requires-Dist: mypy>=1.0.0; extra == "dev"
+Requires-Dist: pre-commit>=3.0.0; extra == "dev"
+Requires-Dist: safety>=2.0.0; extra == "dev"
+Requires-Dist: bandit>=1.7.0; extra == "dev"
+Dynamic: license-file
+
 # VoiceNav-AI 🎤
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

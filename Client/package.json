@@ -1,0 +1,37 @@
+{
+  "name": "voicenav-ai-client",
+  "version": "1.0.0",
+  "description": "VoiceNav-AI Client Application - Voice-controlled web accessibility",
+  "main": "app.js",
+  "scripts": {
+    "dev": "python -m http.server 8000",
+    "lint": "npx eslint app.js --ignore-path .eslintignore",
+    "format": "npx prettier --write *.js *.html *.css",
+    "build": "npm run lint && npm run minify",
+    "minify": "npx terser app.js -o app.min.js --compress --mangle",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "accessibility",
+    "voice-control",
+    "aws",
+    "serverless",
+    "a11y",
+    "assistive-technology"
+  ],
+  "author": "VoiceNav-AI Contributors",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "terser": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oyiz-michael/VoiceNav-AI.git"
+  },
+  "bugs": {
+    "url": "https://github.com/oyiz-michael/VoiceNav-AI/issues"
+  },
+  "homepage": "https://github.com/oyiz-michael/VoiceNav-AI#readme"
+}

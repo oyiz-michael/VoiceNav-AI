@@ -3,7 +3,6 @@ Invoked by S3 → 'transcribe-output/…json'.
 Parses the transcript, asks Bedrock for an intent, pushes that intent
 to every live WebSocket connection stored in DynamoDB.
 """
-
 import json
 import logging
 import os
@@ -98,7 +97,9 @@ def broadcast(intent: Dict[str, Any]) -> None:
     for c in conns:
         cid = c["connID"]
         try:
-            apigw.post_to_connection(ConnectionId=cid, Data=json.dumps(intent).encode())
+            apigw.post_to_connection(
+                ConnectionId=cid, Data=json.dumps(intent).encode()
+            )
         except apigw.exceptions.GoneException:
             log.warning("Stale %s – removing", cid)
             ddb.delete_item(Key={"connID": cid})
