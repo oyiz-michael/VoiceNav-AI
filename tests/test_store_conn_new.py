@@ -2,7 +2,6 @@ import os
 import sys
 
 import boto3
-import pytest
 from moto import mock_aws
 
 # Add the source directory to the path
@@ -17,7 +16,7 @@ def test_connect_event():
     """Test WebSocket connection event"""
     # Set up mock DynamoDB
     dynamodb = boto3.resource("dynamodb", region_name="us-east-1")
-    
+
     # Create mock table
     table = dynamodb.create_table(
         TableName="VoiceNavConnections",
@@ -28,7 +27,7 @@ def test_connect_event():
 
     # Set environment variable
     os.environ["CONN_TABLE"] = "VoiceNavConnections"
-    
+
     event = {
         "requestContext": {
             "connectionId": "test-connection-123",
@@ -52,7 +51,7 @@ def test_disconnect_event():
     """Test WebSocket disconnection event"""
     # Set up mock DynamoDB
     dynamodb = boto3.resource("dynamodb", region_name="us-east-1")
-    
+
     # Create mock table
     table = dynamodb.create_table(
         TableName="VoiceNavConnections",
@@ -63,7 +62,7 @@ def test_disconnect_event():
 
     # Set environment variable
     os.environ["CONN_TABLE"] = "VoiceNavConnections"
-    
+
     # First add a connection
     table.put_item(Item={"connID": "test-connection-456", "ttl": 1234567890})
 
@@ -88,9 +87,9 @@ def test_invalid_event():
     """Test handling of invalid events"""
     # Set up mock DynamoDB
     dynamodb = boto3.resource("dynamodb", region_name="us-east-1")
-    
+
     # Create mock table
-    table = dynamodb.create_table(
+    dynamodb.create_table(
         TableName="VoiceNavConnections",
         KeySchema=[{"AttributeName": "connID", "KeyType": "HASH"}],
         AttributeDefinitions=[{"AttributeName": "connID", "AttributeType": "S"}],
@@ -99,7 +98,7 @@ def test_invalid_event():
 
     # Set environment variable
     os.environ["CONN_TABLE"] = "VoiceNavConnections"
-    
+
     event = {}
 
     response = lambda_handler(event, None)

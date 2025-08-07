@@ -6,7 +6,7 @@ the browser client and AWS Lambda backend.
 
 Handles:
 - Connection establishment ($connect)
-- Connection cleanup ($disconnect) 
+- Connection cleanup ($disconnect)
 - Connection TTL management in DynamoDB
 """
 
@@ -28,20 +28,20 @@ table = dynamodb.Table(os.getenv("CONN_TABLE", "VoiceNavConnections"))
 def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     """
     Handle WebSocket connection events.
-    
+
     Args:
         event: API Gateway WebSocket event
         context: Lambda context (unused)
-        
+
     Returns:
         Dict with statusCode for API Gateway
     """
     try:
         connection_id = event["requestContext"]["connectionId"]
         event_type = event["requestContext"]["eventType"]
-        
+
         logger.info(f"Processing {event_type} for connection {connection_id}")
-        
+
         if event_type == "CONNECT":
             # Store connection with 1-hour TTL
             table.put_item(
@@ -52,14 +52,14 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 }
             )
             logger.info(f"Stored connection: {connection_id}")
-            
+
         elif event_type == "DISCONNECT":
             # Clean up connection
             table.delete_item(Key={"connID": connection_id})
             logger.info(f"Removed connection: {connection_id}")
-            
+
         return {"statusCode": 200}
-        
+
     except Exception as e:
         logger.error(f"Error handling connection event: {str(e)}")
         return {"statusCode": 500}
