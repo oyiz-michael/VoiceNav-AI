@@ -1,1 +1,0 @@
-# Transcribe Processor Lambda Package

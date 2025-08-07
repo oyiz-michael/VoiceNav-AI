@@ -1,1 +1,0 @@
-# Bedrock Processor Lambda Package
